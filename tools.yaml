@@ -1,0 +1,114 @@
+# authServices:
+#   my-google-auth:
+#     kind: google
+#     clientId: ${YOUR_GOOGLE_CLIENT_ID}
+
+sources: # https://googleapis.github.io/genai-toolbox/resources/sources/
+  my-mysql:
+    kind: mysql
+    host: ${MYSQL_HOST} # host.docker.internal
+    port: ${MYSQL_PORT}
+    database: ${MYSQL_DATABASE}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    # queryTimeout: 30s # Optional: query timeout duration
+
+tools: # https://googleapis.github.io/genai-toolbox/resources/tools/
+    execute_sql_tool:
+        kind: mysql-execute-sql
+        source: my-mysql
+        description: Use this tool to execute sql statement.
+    get_tables:
+        kind: mysql-sql
+        source: my-mysql
+        statement: |
+          SHOW TABLES
+        # statement: |
+        #   SELECT table_name
+        #   FROM information_schema.tables
+        #   WHERE table_schema = DATABASE();
+        description: Get all tables in the MySQL database
+        # authRequired:
+        #     - my-google-auth
+        #     - other-auth-service
+    get_column_names: # https://googleapis.github.io/genai-toolbox/resources/tools/mysql/mysql-sql/
+        kind: mysql-sql
+        source: my-mysql
+        description: |
+            Get column names from a specific table in the MySQL database
+            Example:
+            {{
+                "table_name": "inventory"
+            }}
+        # statement: |
+        #   DESC ?
+        # parameters: # Parameters isnt working?!
+        #     - name: table_name
+        #       type: string
+        #       description: Name of the table to get column names from
+        statement: |
+          SELECT column_name
+          FROM information_schema.columns
+          WHERE table_schema = DATABASE() AND table_name = '{{.table_name}}';
+        templateParameters:
+            - name: table_name
+              type: string
+              description: Name of the table to get column names from
+    get_table_data:
+        kind: mysql-sql
+        source: my-mysql
+        statement: |
+            SELECT {{array .columnNames}} FROM {{.tableName}}
+        description: |
+            Use this tool to list all information from a specific table.
+            Example:
+            {{
+                "tableName": "flights",
+                "columnNames": ["id", "name"]
+            }}
+        templateParameters:
+            - name: tableName
+              type: string
+              description: Table to select from
+            - name: columnNames
+              type: array
+              description: The columns to select
+              items:
+                name: column
+                type: string
+                description: Name of a column to select
+    get_table_data_with_filter:
+        kind: mysql-sql
+        source: my-mysql
+        statement: |
+            SELECT {{array .columnNames}} FROM {{.tableName}} WHERE {{.filter}}
+        description: |
+            Use this tool to list all information from a specific table with a filter.
+            Example:
+            {{
+                "tableName": "flights",
+                "columnNames": ["id", "name"],
+                "filter": "id = 1"
+            }}
+        templateParameters:
+            - name: tableName
+              type: string
+              description: Table to select from
+            - name: columnNames
+              type: array
+              description: The columns to select
+              items:
+                name: column
+                type: string
+                description: Name of a column to select
+            - name: filter
+              type: string
+              description: Filter to apply to the query
+
+toolsets:
+  master_toolset: #  default:
+    - get_tables
+    - get_column_names
+    - get_table_data
+    - get_table_data_with_filter
+    - execute_sql_tool

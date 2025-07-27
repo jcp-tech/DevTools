@@ -1,0 +1,36 @@
+{
+    "python.terminal.activateEnvironment": true,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "args": [
+                "-NoExit",
+                "-Command",
+                "& '${workspaceFolder}/venv-windows/Scripts/Activate.ps1'"
+            ]
+        },
+        "WSL": {
+            // "path": "wsl.exe",
+            // "args": [
+            //     "~", // optional: opens at home
+            //     "--cd",
+            //     "${workspaceFolder}",
+            //     "-e",
+            //     "bash",
+            //     "-c",
+            //     "source venv-linux/bin/activate; exec bash"
+            // ]
+            "source": "PowerShell",
+            "args": [
+                "-NoExit",
+                "-Command",
+                // "wsl bash -c 'source venv-linux/bin/activate && exec bash --noprofile --norc'" // Is in Enviroment but doesnt show the path it is in.
+                "wsl -e bash -c 'source venv-linux/bin/activate && exec bash'" // Is in Enviroment but doesnt show that it is.
+            ]
+        }
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/venv-windows/Scripts/python.exe", // "${workspaceFolder}/venv-linux/bin/python",
+    "terminal.integrated.defaultProfile.windows": "PowerShell", // "WSL",
+    "IDX.aI.enableInlineCompletion": true,
+    "IDX.aI.enableCodebaseIndexing": true
+}

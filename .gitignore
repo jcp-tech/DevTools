@@ -1,0 +1,15 @@
+**/*__pycache__*/
+**/.env
+**/img_content
+**/uploads
+/venv-linux
+/venv-windows
+**/*ignore*/
+/ignore-notes.md
+/ignore.bash
+**/*.keras
+**/serviceAccountKey.json
+**/gcp_service_account.json
+**/firebase_credentials.json
+**/firebaseConfig.json
+/toolbox.exe
