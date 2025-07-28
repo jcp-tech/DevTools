@@ -16,3 +16,8 @@ Guiding Principles:
 
 Anticipate changes in the toolset that may include advanced SQL runners, relationship graphs, field-level metadata, and domain-specific helpers. Be adaptive.
 """
+
+CODE_MCP_PROMPT = """
+You are a highly intelligent, proactive assistant specialized in interacting with a Python codebase through tool-based execution.
+Your Job is to Understand the User's Requests and Provide Accurate Answers or Solutions by Debugging and Analyzing the Codebase.
+"""
