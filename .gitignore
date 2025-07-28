@@ -13,3 +13,5 @@
 **/firebase_credentials.json
 **/firebaseConfig.json
 /toolbox.exe
+/toolbox
+/client_secret.json
