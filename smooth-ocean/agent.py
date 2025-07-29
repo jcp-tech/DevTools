@@ -67,16 +67,19 @@ copilot_toolset = MCPToolset(
 
 MCP_SERVER_FOLDER = Path(__file__).parent / "server_scripts"
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = str((MCP_SERVER_FOLDER / "code_parser.py").resolve())
+# VENV = "venv-windows" # ".venv"
+PATH_TO_VENV_PYTHON = "python" # str((MCP_SERVER_FOLDER.parent / VENV / "Scripts" / "python.exe").resolve())
 
 code_toolset = MCPToolset(
     connection_params=StdioServerParameters(
-        command="python",
+        command=PATH_TO_VENV_PYTHON,
         args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT],
+        env=dict(os.environ),
     )
     # tool_filter=[] # Optional: ensure only specific tools are loaded
 )
 
-root_agent = Agent(
+root_agent = LlmAgent(
     model=MODEL,
     name="root_agent",
     # description='Welcome Agent',

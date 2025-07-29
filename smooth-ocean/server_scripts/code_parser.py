@@ -29,8 +29,6 @@ logging.basicConfig(
 )
 # --- End Logging Setup ---
 
-DATABASE_PATH = os.path.join(os.path.dirname(__file__), "database.db")
-
 def list_all_paths(dummy_param: str) -> dict:
     """Lists all paths in the project directory.
 
