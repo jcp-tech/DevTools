@@ -1,9 +1,8 @@
 # tools.py
 from google.adk.tools.tool_context import ToolContext
 from urllib.parse import urlparse
+import re, importlib, os, requests
 from typing import Dict, Any
-import re, importlib
-import requests
 
 CONVERTERS = { # Django-like converters
     "str":  r"[^/]+",
@@ -21,7 +20,9 @@ def import_from_dotted(dotted: str):
     return getattr(m, attr)
 
 def get_all_urls():
-    response = requests.get("http://127.0.0.1:8000/list_all_urls") # Temporary URL for testing
+    BASE_URL = os.getenv("DJANGO_SERVER_URL", "http://127.0.0.1:8000")
+    BASE_URL = BASE_URL[:-1] if BASE_URL.endswith("/") else BASE_URL
+    response = requests.get(f"{BASE_URL}/list_all_urls/") # Temporary URL for testing
     path_dict = response.json()
     data = path_dict["routes"]
     return data
