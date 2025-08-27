@@ -13,4 +13,4 @@
 **/firebaseConfig.json
 **/client_secret.json
 **/*.keras
-/server_scripts/mcp_server_activity.log
+smooth-ocean/server_scripts/

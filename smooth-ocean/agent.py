@@ -8,6 +8,7 @@ from google.adk.tools.mcp_tool.mcp_toolset import (
 from google.adk.auth import AuthCredentialTypes, AuthCredential, OAuth2Auth
 from google.adk.tools.toolbox_toolset import ToolboxToolset # from toolbox_core import ToolboxClient
 from .prompt import DB_MCP_PROMPT, CODE_MCP_PROMPT
+from .tools import get_lookup_url
 from dotenv import load_dotenv
 from pathlib import Path
 # import asyncio
@@ -29,7 +30,7 @@ auth_credential = AuthCredential(
     ),
 )
 
-toolbox_toolset = ToolboxToolset(
+db_toolset = ToolboxToolset(
     server_url=TOOLSET_LINK,
     toolset_name="master_toolset", # 'default'
     # tool_names=[],
@@ -47,46 +48,13 @@ toolbox_toolset = ToolboxToolset(
     # }
 )
 
-copilot_toolset = MCPToolset(
-    connection_params=StdioServerParameters(
-        command="docker",
-        args=[
-            "run",
-            "-i",
-            "--rm",
-            "-e",
-            "GITHUB_PERSONAL_ACCESS_TOKEN",
-            "ghcr.io/github/github-mcp-server"
-        ],
-        env={
-            "GITHUB_PERSONAL_ACCESS_TOKEN": GITHUB_PAT
-        },
-    ),
-    # tool_filter=[] # Optional: ensure only specific tools are loaded
-)
-
-MCP_SERVER_FOLDER = Path(__file__).parent / "server_scripts"
-PATH_TO_YOUR_MCP_SERVER_SCRIPT = str((MCP_SERVER_FOLDER / "code_parser.py").resolve())
-# VENV = "venv-windows" # ".venv"
-PATH_TO_VENV_PYTHON = "python" # str((MCP_SERVER_FOLDER.parent / VENV / "Scripts" / "python.exe").resolve())
-
-code_toolset = MCPToolset(
-    connection_params=StdioServerParameters(
-        command=PATH_TO_VENV_PYTHON,
-        args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT],
-        env=dict(os.environ),
-    )
-    # tool_filter=[] # Optional: ensure only specific tools are loaded
-)
-
 root_agent = LlmAgent(
     model=MODEL,
     name="root_agent",
     # description='Welcome Agent',
     instruction=CODE_MCP_PROMPT,
     tools=[
-        # toolbox_toolset,
-        # copilot_toolset,
-        code_toolset,
+        # db_toolset,
+        get_lookup_url,
     ],
 )
