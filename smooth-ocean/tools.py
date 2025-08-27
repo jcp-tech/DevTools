@@ -1,22 +1,9 @@
 # tools.py
 from google.adk.tools.tool_context import ToolContext
-from pydantic import BaseModel, Field
-from typing import Dict, Any, List
 from urllib.parse import urlparse
-from datetime import datetime
-import json, re, sys, importlib, inspect, os
-import subprocess
-import platform
+from typing import Dict, Any
+import re, importlib
 import requests
-
-# BASE_URL = "https://smooth-ocean.tech"
-# BASE_PATH = r"C:\Users\JonathanChackoPattas\OneDrive - Maritime Support Solutions\Desktop\MSS-Automation"
-# WINDOWS = platform.system() == "Windows" # sys.platform.startswith("win")
-# PYTHON_ENV_PATH = r"C:\Users\JonathanChackoPattas\OneDrive - Maritime Support Solutions\Desktop\MSS-Automation\venv-windows"
-# if WINDOWS:
-#     ENV_PATH = os.path.join(PYTHON_ENV_PATH, "Scripts", "python.exe")
-# else:
-#     ENV_PATH = os.path.join(PYTHON_ENV_PATH, "bin", "python")
 
 CONVERTERS = { # Django-like converters
     "str":  r"[^/]+",
@@ -34,27 +21,9 @@ def import_from_dotted(dotted: str):
     return getattr(m, attr)
 
 def get_all_urls():
-    # json_file_name = "url_mapping.json"
-    # json_file_path = os.path.join(BASE_PATH, "tools", json_file_name)
-    # if not os.path.exists(json_file_path):
-    #     # run python manage.py show_urls --format=json > url_mapping.json
-    #     """
-    #     usage: manage.py show_urls [-h] [--unsorted] [--language LANGUAGE] [--decorator DECORATOR] [--format FORMAT_STYLE] [--urlconf URLCONF] [--version] [-v {0,1,2,3}] [--settings SETTINGS] [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
-    #     """
-    #     os.chdir(BASE_PATH)
-    #     # os.system(f"python manage.py show_urls --format=pretty-json > tools/{json_file_name}")
-    #     subprocess.run(
-    #         [ENV_PATH, "manage.py", "show_urls", "--format=pretty-json", f"> tools/{json_file_name}"],
-    #         shell=True  # needed so ">" redirection works on Windows
-    #     )
-    # with open(json_file_path, "r", encoding="utf-8") as f:
-    #     data = json.load(f)
     response = requests.get("http://127.0.0.1:8000/list_all_urls") # Temporary URL for testing
     path_dict = response.json()
     data = path_dict["routes"]
-    # print(json.dumps(data, indent=4))
-    # with open("url_mapping.json", "w", encoding="utf-8") as f:
-    #     json.dump(data, f, indent=4, ensure_ascii=False)
     return data
 
 def django_to_regex(pattern: str) -> re.Pattern:
@@ -74,8 +43,6 @@ def find_route(url: str):
     Returns (route_dict, params_dict) or (None, None) if not found.
     """
     routes = get_all_urls()
-    # with open("C:\\Users\\JonathanChackoPattas\\OneDrive - Maritime Support Solutions\\Desktop\\MSS-Automation\\urlmap.json") as f:
-    #     routes = json.load(f)
     path = urlparse(url).path if "://" in url else url # Extract path (works for both absolute and relative inputs)
     path = re.sub(r"/{2,}", "/", path).rstrip("/") + "/" # Normalize: collapse multiple slashes and ensure one trailing slash for matching
     for route in routes:
