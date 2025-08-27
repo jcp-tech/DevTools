@@ -1,7 +1,7 @@
-authServices: # https://googleapis.github.io/genai-toolbox/resources/authservices/
-  my-google-auth:
-    kind: google
-    clientId: ${YOUR_GOOGLE_CLIENT_ID}
+# authServices: # https://googleapis.github.io/genai-toolbox/resources/authservices/
+#   my-google-auth:
+#     kind: google
+#     clientId: ${YOUR_GOOGLE_CLIENT_ID}
 
 sources: # https://googleapis.github.io/genai-toolbox/resources/sources/
   my-mysql:
@@ -18,8 +18,8 @@ tools: # https://googleapis.github.io/genai-toolbox/resources/tools/
         kind: mysql-execute-sql
         source: my-mysql
         description: Use this tool to execute sql statement.
-        authRequired:
-          - my-google-auth
+        # authRequired:
+        #   - my-google-auth
     get_tables:
         kind: mysql-sql
         source: my-mysql

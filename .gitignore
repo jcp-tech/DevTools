@@ -13,4 +13,5 @@
 **/firebaseConfig.json
 **/client_secret.json
 **/*.keras
+smooth-ocean/custom_utils/
 smooth-ocean/server_scripts/
