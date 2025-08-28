@@ -1,16 +1,74 @@
-# This is going to be a Developer Support System it will Include but not Limited to:
+# Developer Support System — Plan&#x20;
 
-> NOTE: Currently going to make for a Django, MySQL System...
+> **Note:** Built on **ADK (Agent Development Kit)**, focused on debugging a **Django + MySQL system**.
 
-## DEBUGGING System:
-- This is for Users to Give Details to the the AI Agent like Sreenshot's, The Yellow Error Pages Text or Just Details of what happend and with the Problem.
-- The AI will by Understanding the Problem Start Following Standard Debugging Procedure Step by Step (by Providing Tasks to it's Sub Agent's or Tool's).
-- Steps:
-    - If there is a Link take the Link and Extract the File/Function Location
-    - If You have the File or Function Path, read the Function Starting with the `__docs__` and then the Code in Full, IF THERE is any SubFunctions called in the Function which is Referenced read it and Understand what they do, Use All this to Build the Logic of the Function to Understand it more.
-    - You may Also have to use the Database Models Understanding what Data Get's Sent in the Function and where.
-    - Understanding the Data Flow is Releavant (There will be a Documentation of whatever i can Explain of how the System Works but it will be Limited)
-- Tools which will be Given to the Agent:
-    - GenAI Toolkit Toolbox to Connect to Read & if needed Write Data to the (MySQL) Database.
-    - Custom Build Tool (to be Converted to ADK's MCP Server) which will tell the User what are the Differnt Link's in the System & a Tool which when Giving a Link to it for Debugging, it will return Important Details like Url, FilePath, Name, etc... These Details will Later been Used to Identify and Debugg the Function.
-    - File or Function Reading Tools can be done using GitHub MCP &or Some Custom Built Code Parsing Tool.
+## 1) Purpose
+
+Help users debug issues by providing details (screenshots, Django yellow error pages, HTML, images, or free‑form descriptions). The AI agent will understand the problem and follow a standard, step‑by‑step debugging procedure, delegating tasks to sub‑agents/tools as needed.
+
+## 2) Scope (Current)
+
+* **Agentic Framework:** ADK (core orchestration layer)
+* **Target Framework for Debugging:** Django
+* **Database:** MySQL
+* **Context Inputs:**
+
+  * Screenshots
+  * Yellow error page text (raw HTML, image, or plain text)
+  * Free‑form problem details
+  * Links/URLs inside the app (when available)
+
+## 3) Debugging Workflow (Existing)
+
+1. **If a link is provided:**
+
+   * Extract file/function location from the link.
+2. **If file or function path is known:**
+
+   * Read the function docstring (`__doc__`) first, then the full function code.
+   * If sub‑functions are referenced inside, read them too and understand their behavior.
+   * Use this to reconstruct the logic of the function for deeper understanding.
+3. **Use database models when relevant:**
+
+   * Understand what data enters the function and where it goes.
+4. **Understand the data flow:**
+
+   * Rely on any available documentation (acknowledging it may be limited).
+
+## 4) Tools (Existing)
+
+* **ADK as Orchestration Layer**
+
+  * Hosts the agent network; coordinates sub‑agents and tool calls.
+* **GenAI Toolkit Toolbox**
+
+  * Connect to **MySQL** (initially **read‑only**; later, controlled write access will be enabled after verification).
+* **Custom‑Built Tool (to be converted to ADK’s MCP Server)**
+
+  * Lists the different links in the system.
+  * Given a link for debugging, returns key details (URL, file path, name, etc.) with schema guaranteed for locating the code.
+* **File/Function Reading Tools**
+
+  * Via **GitHub MCP** and/or a **custom code‑parsing tool** (both may be used; GitHub MCP is ideal but limited on alternate branches).
+
+## 5) Assumptions & Constraints (As Stated)
+
+* System documentation exists but is limited.
+* The agent should prioritize understanding function logic and data flow from real code and models.
+* MySQL: start with **read‑only access**. Controlled writes added later once reliability is proven.
+* The ADK agent network is separate from Django, with only database + tool permissions for debugging.
+* Links inspector guarantees correct schema for locating code.
+
+## 6) Supporting Context (New)
+
+* **Notion Documentation** will be provided, containing scenarios, problems, and mitigation strategies. This gives the agent context on system logic and expected flows.
+* **Agentic Pipelines in ADK:** ADK will orchestrate multiple specialized agents working together in a pipeline.
+* **Audit Trail (Future To‑Do):** Logging every debugging step is **very important**, but will be added after the system stabilizes.
+
+## 7) Current Status Summary
+
+* Planning a multi‑agent debugging flow using ADK as the orchestration framework.
+* Flow starts from user-provided artifacts (links, error pages, screenshots, text) and drills into code, sub‑functions, and models to map data flow and logic.
+* Tooling to resolve links → code locations and to read code is in scope.
+* MySQL connectivity via GenAI toolkit is in scope (read‑only first).
+* Notion docs and audit trail are part of the future roadmap.
