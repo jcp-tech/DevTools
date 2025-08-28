@@ -26,6 +26,6 @@ fi
 #   us-central1-docker.pkg.dev/database-toolbox/toolbox/toolbox:0.10.0 \
 #   --prebuilt mysql
 
-
+## Run Using
 # chmod +x run_toolbox_docker.sh
 # ./run_toolbox_docker.sh
