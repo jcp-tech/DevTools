@@ -1,6 +1,6 @@
 # smooth-ocean.tech.ai
 
-from google.adk.agents import Agent, LlmAgent
+from google.adk.agents import BaseAgent, Agent, LlmAgent, SequentialAgent, LoopAgent, ParallelAgent
 from google.adk.tools.mcp_tool.mcp_toolset import (
     MCPToolset,
     # StdioConnectionParams,
@@ -10,7 +10,7 @@ from google.adk.tools.mcp_tool.mcp_toolset import (
 from .custom_utils.enviroment_interaction import load_instruction_from_file
 from google.adk.tools.toolbox_toolset import ToolboxToolset # from toolbox_core import ToolboxClient
 from .prompt import DB_MCP_PROMPT, CODE_MCP_PROMPT
-from .tools import get_lookup_url
+from .lookup_tools import get_lookup_url
 from dotenv import load_dotenv
 # from pathlib import Path
 # import asyncio
