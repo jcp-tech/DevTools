@@ -9,7 +9,6 @@ from google.adk.tools.mcp_tool.mcp_toolset import (
 # from google.adk.auth import AuthCredentialTypes, AuthCredential, OAuth2Auth
 from .custom_utils.enviroment_interaction import load_instruction_from_file
 from google.adk.tools.toolbox_toolset import ToolboxToolset # from toolbox_core import ToolboxClient
-from .prompt import DB_MCP_PROMPT, CODE_MCP_PROMPT
 from .parser_tools import extract_function_source_tool
 from .lookup_tools import get_lookup_url
 from dotenv import load_dotenv
@@ -20,7 +19,7 @@ import os
 load_dotenv()
 
 MODEL = os.getenv('GOOGLE_GENAI_MODEL', 'gemini-2.0-flash')
-BASE_PATH = os.getenv('BASE_PATH')
+BASE_PATH = os.getenv('BASE_PATH', "NOT GIVEN PATH!")
 
 TOOLSET_LINK = os.getenv('TOOLSET_LINK', 'http://127.0.0.1:5000')
 # GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
@@ -73,7 +72,7 @@ root_agent = LlmAgent(
     model=MODEL,
     name="root_agent",
     # description='Welcome Agent',
-    instruction=CODE_MCP_PROMPT,
+    instruction=load_instruction_from_file("code_mcp.prompt", subs={"base_path": BASE_PATH}),
     tools=[
         # db_toolset,
         get_lookup_url,
