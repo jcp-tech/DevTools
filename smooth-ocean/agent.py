@@ -76,7 +76,7 @@ root_agent = LlmAgent(
     instruction=CODE_MCP_PROMPT,
     tools=[
         # db_toolset,
-        # get_lookup_url,
+        get_lookup_url,
         # copilot_toolset,
         extract_function_source_tool,
     ],
