@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from functools import lru_cache
 from typing import Optional, Dict, Tuple, List, Union, Iterable, Set, Any
+from pydantic import BaseModel, Field, field_validator, model_validator  # Pydantic v2
 
 FuncNode = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
@@ -238,10 +239,10 @@ def extract_function_source_ast(
     *,
     base_path: str | Path,
     detailed_functions: bool = False,
-    reursive_helper: bool = False,
+    recursive_helper: bool = False,
     aggressive_fallback: bool = False,  # set True to allow cross-project name fallback
-    tool_context: ToolContext
-) -> Dict[str, Any]:
+    # tool_context: ToolContext
+): # -> Dict[str, Any]
     """
     Extract a function or method source by name.
 
@@ -381,7 +382,7 @@ def extract_function_source_ast(
                     func_or_qualname=f,
                     include_helpers=detailed_functions,
                     base_path=base_path,
-                    detailed_functions=reursive_helper,
+                    detailed_functions=recursive_helper,
                 ))
         else:
             helper_function_paths_final = helper_function_paths
@@ -394,3 +395,96 @@ def extract_function_source_ast(
         "file": str(path),
         "helpers": helper_function_paths_final,
     }
+
+class ParameterInputSchema(BaseModel):
+    function_path: str = Field(..., alias="function_path")
+    include_helpers: bool = Field(False, alias="include_helpers")
+    base_path: str = Field(..., alias="base_path")
+    detailed_functions: bool = Field(False, alias="detailed_functions")
+    recursive_helper: bool = Field(False, alias="recursive_helper")
+    aggressive_fallback: bool = Field(False, alias="aggressive_fallback")
+
+    # allow using field names instead of aliases and vice-versa
+    model_config = dict(populate_by_name=True)
+
+    # @field_validator("base_path", mode="before")
+    # @classmethod
+    # def _coerce_to_path(cls, v):
+    #     return Path(v).expanduser() if not isinstance(v, Path) else v
+
+    # @model_validator(mode="after")
+    # def _validate_paths(self):
+    #     # Convert to Path
+    #     self.base_path = Path(self.base_path).resolve()
+    #     self.file_path = Path(self.file_path).resolve()
+    #     if not self.file_path.exists():
+    #         raise ValueError(f"file_path does not exist: {self.file_path}")
+    #     if not self.file_path.is_file():
+    #         raise ValueError("file_path must be a file")
+    #     # Ensure file_path is within base_path
+    #     try:
+    #         self.file_path.relative_to(self.base_path)
+    #     except ValueError as e:
+    #         raise ValueError(
+    #             f"file_path must be under base_path\n  file: {self.file_path}\n  base: {self.base_path}"
+    #         ) from e
+    #     return self
+
+    # Back-compat property for code that still references the misspelling
+    @property
+    def reursive_helper(self) -> bool:
+        return self.recursive_helper
+
+    def to_kwargs(self) -> Dict[str, Any]:
+        """Map schema to extract_function_source_ast kwargs (preserves original param names)."""
+        path, func = create_file_path(str(self.base_path), str(self.function_path))
+        return {
+            "file_path": path,
+            "func_or_qualname": func,
+            "include_helpers": self.include_helpers,
+            "base_path": str(self.base_path),
+            "detailed_functions": self.detailed_functions,
+            "recursive_helper": self.recursive_helper,   # keep original name expected by your function
+            "aggressive_fallback": self.aggressive_fallback,
+        }
+
+def extract_function_source(
+        params: ParameterInputSchema,  # set True to allow cross-project name fallback
+        tool_context: ToolContext
+    ) -> Dict[str, Any]:
+    """
+    Wrapper around `extract_function_source_ast` that accepts a validated
+    `ParameterInputSchema` and forwards its fields as keyword arguments.
+
+    Parameters
+    ----------
+    params : ParameterInputSchema
+        Contains:
+          - function_path (str): Path to the function/method to extract.
+          - include_helpers (bool): If True, also return helper function *paths* discovered
+            from calls inside the target, searching across the project.
+          - base_path (str): Project root directory. Only files under this root are considered.
+          - detailed_functions (bool): If True, include detailed information about function
+            arguments and return types.
+          - recursive_helper (bool): If True, include helper functions found in the same file.
+          - aggressive_fallback (bool): If True, when binding can't be proven, include all
+            same-named top-level functions found across the project.
+    tool_context : ToolContext
+        Tool context (e.g., session/runtime context) passed through to the extractor.
+
+    Returns
+    -------
+    Dict[str, Any]
+        {
+          "code": str,
+          "start_line": int,
+          "end_line": int,
+          "function": str,
+          "file": str,
+          "helpers": List[str] | List[Dict[str, Any]]  # depends on detailed_helpers flags
+        }
+    """
+    return extract_function_source_ast(
+        # tool_context=tool_context,
+        **params.to_kwargs(),
+    )
