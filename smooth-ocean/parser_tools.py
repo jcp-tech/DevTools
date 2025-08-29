@@ -1,5 +1,4 @@
 # smooth-ocean/parser_tools.py
-from google.adk.tools.tool_context import ToolContext
 from __future__ import annotations
 import ast
 import os
@@ -7,6 +6,7 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Optional, Dict, Tuple, List, Union, Iterable, Set, Any
 from pydantic import BaseModel, Field, field_validator, model_validator  # Pydantic v2
+from google.adk.tools.tool_context import ToolContext # other imports must occur at the beginning of the file
 
 FuncNode = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
@@ -44,10 +44,6 @@ def _to_module_qualname(base_path: Path, file_path: Path) -> str:
     else:
         rel = rel.with_suffix("")
     return ".".join(rel.parts)
-
-def _to_function_path(base_path: Path, file_path: Path, func_name: str) -> str:
-    mod = _to_module_qualname(base_path, file_path)
-    return f"{mod}.{func_name}" if mod else func_name
 
 def _gather_defs(module: ast.Module) -> Tuple[Dict[str, FuncNode], Dict[str, Dict[str, FuncNode]]]:
     """Return (top_level_funcs, class_methods[class_name][func_name])."""
@@ -448,7 +444,7 @@ class ParameterInputSchema(BaseModel):
             "aggressive_fallback": self.aggressive_fallback,
         }
 
-def extract_function_source(
+def extract_function_source_tool(
         params: ParameterInputSchema,  # set True to allow cross-project name fallback
         tool_context: ToolContext
     ) -> Dict[str, Any]:
@@ -484,7 +480,15 @@ def extract_function_source(
           "helpers": List[str] | List[Dict[str, Any]]  # depends on detailed_helpers flags
         }
     """
+    print("extract_function_source_tool", params)
+    params = params.to_kwargs() if isinstance(params, ParameterInputSchema) else params
+    if 'function_path' in params:
+        path, func = create_file_path(params['base_path'], str(params['function_path']))
+        params['file_path'] = path
+        params['func_or_qualname'] = func
+        # print("The AI gave a Dict not a PyDantic BaseModel.")
+        params.pop('function_path')
     return extract_function_source_ast(
         # tool_context=tool_context,
-        **params.to_kwargs(),
+        **params,
     )
