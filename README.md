@@ -72,3 +72,5 @@ Help users debug issues by providing details (screenshots, Django yellow error p
 * Tooling to resolve links → code locations and to read code is in scope.
 * MySQL connectivity via GenAI toolkit is in scope (read‑only first).
 * Notion docs and audit trail are part of the future roadmap.
+
+<!-- <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:share:7368415904369405952?collapsed=1" height="598" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe> -->

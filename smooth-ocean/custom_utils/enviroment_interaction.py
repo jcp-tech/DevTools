@@ -3,7 +3,7 @@ import os
 
 def load_instruction_from_file(
     filename: str, default_instruction: str = "Default instruction.", subs:dict = {}
-) -> str: # https://github.com/google/adk-docs/blob/main/examples/python/agent-samples/youtube-shorts-assistant/util.py
+) -> str:
     """Reads instruction text from a file relative to this script."""
     instruction = default_instruction
     try:

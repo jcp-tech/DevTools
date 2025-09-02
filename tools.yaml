@@ -14,7 +14,7 @@ sources: # https://googleapis.github.io/genai-toolbox/resources/sources/
     # queryTimeout: 30s # Optional: query timeout duration
 
 tools: # https://googleapis.github.io/genai-toolbox/resources/tools/
-    execute_sql_tool:
+    execute_sql_tool: # https://googleapis.github.io/genai-toolbox/resources/tools/mysql/mysql-execute-sql/
         kind: mysql-execute-sql
         source: my-mysql
         description: Use this tool to execute sql statement.

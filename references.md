@@ -1,0 +1,1 @@
+Got load_instruction_from_file() - from https://github.com/google/adk-docs/blob/main/examples/python/agent-samples/youtube-shorts-assistant/util.py
