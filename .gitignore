@@ -1,6 +1,3 @@
-DevTools/selenium_tools.py
-DevTools/auth_tools.py
-DevTools/custom_utils/prompts/scrapper.prompt
 **/*__pycache__*/
 **/.env
 **/*ignore*/

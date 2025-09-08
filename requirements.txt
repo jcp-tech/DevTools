@@ -7,3 +7,4 @@ mcp
 # litellm
 python-dotenv
 toolbox-core
+# selenium
