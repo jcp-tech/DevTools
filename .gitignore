@@ -1,3 +1,6 @@
+DevTools/selenium_tools.py
+DevTools/auth_tools.py
+DevTools/custom_utils/prompts/scrapper.prompt
 **/*__pycache__*/
 **/.env
 **/*ignore*/
@@ -13,4 +16,4 @@
 **/firebaseConfig.json
 **/client_secret.json
 **/*.keras
-smooth-ocean/server_scripts/
+DevTools/server_scripts/
