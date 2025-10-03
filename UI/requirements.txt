@@ -1,0 +1,5 @@
+streamlit # streamlit>=1.31.0
+pandas
+requests>=2.31.0
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
