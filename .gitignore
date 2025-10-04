@@ -11,4 +11,5 @@
 **/service-account.json
 **/*.keras
 DevTools/server_scripts/
+UI/login.zip
 plan.txt

@@ -120,3 +120,7 @@ We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guideline
 - **Licensor:** Jonathan Chacko (jcp-tech)  
 - **Licensed Work:** DevTools  
 - License: **BSL 1.1**, with conversion to **Apache-2.0** on the Change Date
+
+
+> uvicorn UI.flask_login.main:app --reload --host 127.0.0.1 --port 8000
+> streamlit run .\UI\streamlit_chat\login.py
