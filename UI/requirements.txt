@@ -1,5 +1,8 @@
-streamlit # streamlit>=1.31.0
+streamlit # streamlit>=1.37.01.31.0
 pandas
 requests>=2.31.0
+google-auth-oauthlib>=1.2.0
+firebase-admin>=6.5.0
+# extra-streamlit-components
 fastapi>=0.100.0
 uvicorn[standard]>=0.20.0
