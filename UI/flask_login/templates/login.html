@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sign in</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --bg:#0b1020; --card:#121a33; --text:#e8ecff; --accent:#7aa2ff; --danger:#ff6b6b; }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    .wrap { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+    .card { width: 100%; max-width: 460px; background: var(--card); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+    h1 { margin: 0 0 16px; font-size: 1.4rem; }
+    .row { display: grid; gap: 10px; }
+    label { font-size: .9rem; opacity: .9; }
+    input { width: 100%; padding: 10px 12px; border: 1px solid #2a3864; border-radius: 10px; background: #0e1530; color: var(--text); }
+    button, .btn { width: 100%; padding: 12px; border: 0; border-radius: 12px; background: var(--accent); color: #081028; font-weight: 700; cursor: pointer; text-align:center; text-decoration:none; display:inline-block; }
+    button:hover, .btn:hover { filter: brightness(1.08); }
+    .sep { text-align:center; margin: 10px 0; opacity: .7; font-size: .9rem; }
+    .alert { background:#2a1120; border:1px solid var(--danger); color:#ffd7d7; padding:10px 12px; border-radius:10px; margin:0 0 12px; }
+    .muted { font-size: .9rem; opacity: .8; text-align:center; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Sign in</h1>
+
+      {% if error %}
+        <div class="alert">{{ error }}</div>
+      {% endif %}
+
+      <!-- Google Sign-in -->
+      <form action="/login/google" method="get" style="margin-bottom:12px;">
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit">Continue with Google</button>
+      </form>
+
+      <div class="sep">or</div>
+
+      <!-- Email + Password via Firebase Auth REST -->
+      <form action="/login/email" method="post" class="row">
+        <input type="hidden" name="next" value="{{ next }}">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="you@example.com" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="********" required>
+
+        <button type="submit">Sign in with Email</button>
+      </form>
+
+      <div class="muted">
+        By continuing you agree to the Terms and acknowledge the Privacy Policy.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
