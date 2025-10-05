@@ -33,8 +33,8 @@
     </div>
     <div class="row" style="gap:8px">
       <span id="authStatus" class="muted">Checking login…</span>
-      <a id="loginLink" class="pill" href="{{ AUTH_BASE_URL }}/login" style="display:none; text-decoration:none; color:var(--text)">🔑 Login</a>
-      <a id="logoutLink" class="pill" href="{{ AUTH_BASE_URL }}/logout" style="display:none; text-decoration:none; color:var(--text)">🚪 Logout</a>
+      <a id="loginLink" class="pill" href="/login" style="display:none; text-decoration:none; color:var(--text)">🔑 Login</a>
+      <a id="logoutLink" class="pill" href="/logout" style="display:none; text-decoration:none; color:var(--text)">🚪 Logout</a>
     </div>
   </div>
 
@@ -64,7 +64,6 @@
 
   <!-- Inject config constants once (outside raw) -->
   <script>
-    const AUTH_BASE = "{{ AUTH_BASE_URL }}";
     const APP_NAME  = "{{ APP_NAME }}";
   </script>
 
@@ -125,7 +124,7 @@
 
     async function checkAuth() {
         try {
-        const res = await fetch(`${AUTH_BASE}/me`, {
+        const res = await fetch(`/me`, {
             method: "GET",
             credentials: "include"
         });
