@@ -34,8 +34,8 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "audio_files" not in st.session_state:
-    st.session_state.audio_files = []
+# if "attached_file" not in st.session_state:
+#     st.session_state.attached_file = []
 
 def create_session():
     """
@@ -62,7 +62,7 @@ def create_session():
     if response.status_code == 200:
         st.session_state.session_id = session_id
         st.session_state.messages = []
-        st.session_state.audio_files = []
+        # st.session_state.attached_file = []
         return True
     else:
         st.error(f"Failed to create session: {response.text}")
@@ -123,27 +123,26 @@ def send_message(message):
     
     # Extract assistant's text response
     assistant_message = None
-    audio_file_path = None
+    # attached_file_path = None
     
     for event in events:
         # Look for the final text response from the model
         if event.get("content", {}).get("role") == "model" and "text" in event.get("content", {}).get("parts", [{}])[0]:
             assistant_message = event["content"]["parts"][0]["text"]
         
-        # Look for text_to_speech function response to extract audio file path
-        if "functionResponse" in event.get("content", {}).get("parts", [{}])[0]:
-            func_response = event["content"]["parts"][0]["functionResponse"]
-            if func_response.get("name") == "text_to_speech":
-                response_text = func_response.get("response", {}).get("result", {}).get("content", [{}])[0].get("text", "")
-                # Extract file path using simple string parsing
-                if "File saved as:" in response_text:
-                    parts = response_text.split("File saved as:")[1].strip().split()
-                    if parts:
-                        audio_file_path = parts[0].strip(".")
+        # # Look for text_to_speech function response to extract file path
+        # if "functionResponse" in event.get("content", {}).get("parts", [{}])[0]:
+        #     func_response = event["content"]["parts"][0]["functionResponse"]
+        #     if func_response.get("name") == "text_to_speech":
+        #         response_text = func_response.get("response", {}).get("result", {}).get("content", [{}])[0].get("text", "")
+        #         if "File saved as:" in response_text:
+        #             parts = response_text.split("File saved as:")[1].strip().split()
+        #             if parts:
+        #                 attached_file_path = parts[0].strip(".")
     
     # Add assistant response to chat
     if assistant_message:
-        st.session_state.messages.append({"role": "assistant", "content": assistant_message, "audio_path": audio_file_path})
+        st.session_state.messages.append({"role": "assistant", "content": assistant_message}) # , "attached_file": attached_file_path
     
     return True
 
@@ -178,13 +177,13 @@ for msg in st.session_state.messages:
         with st.chat_message("assistant"):
             st.write(msg["content"])
             
-            # Handle audio if available
-            if "audio_path" in msg and msg["audio_path"]:
-                audio_path = msg["audio_path"]
-                if os.path.exists(audio_path):
-                    st.audio(audio_path)
-                else:
-                    st.warning(f"Audio file not accessible: {audio_path}")
+            # # Handle File if available
+            # if "attached_file" in msg and msg["attached_file"]:
+            #     attached_file = msg["attached_file"]
+            #     if os.path.exists(attached_file):
+            #         st.file(attached_file)
+            #     else:
+            #         st.warning(f"File not accessible: {attached_file}")
 
 # Input for new messages
 if st.session_state.session_id:  # Only show input if session exists
