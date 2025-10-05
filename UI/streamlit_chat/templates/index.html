@@ -82,10 +82,11 @@
     const sessionBadge = document.getElementById("sessionBadge");
 
     function uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
-      });
+        });
     }
 
     const userKey = "devtools_user_id";
@@ -95,129 +96,138 @@
     let sessionId = null;
 
     function addMsg(role, text) {
-      const div = document.createElement("div");
-      div.className = "bubble " + (role === "user" ? "u" : "a");
-      div.textContent = text;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
+        const div = document.createElement("div");
+        div.className = "bubble " + (role === "user" ? "u" : "a");
+        div.textContent = text;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
     }
 
     function setAuthedUI(nameOrEmail) {
-      authStatus.textContent = `👋 ${nameOrEmail}`;
-      loginLink.style.display = "none";
-      logoutLink.style.display = "inline-block";
-      composer.disabled = false;
-      sendBtn.disabled = false;
-      newSessionBtn.disabled = false;
-      userBadge.innerHTML = `user: <strong>${userId}</strong>`;
+        authStatus.textContent = `👋 ${nameOrEmail}`;
+        loginLink.style.display = "none";
+        logoutLink.style.display = "inline-block";
+        composer.disabled = false;
+        sendBtn.disabled = false;
+        newSessionBtn.disabled = false;
+        userBadge.innerHTML = `user: <strong>${userId}</strong>`;
     }
 
     function setUnauthedUI() {
-      authStatus.textContent = "Not logged in";
-      loginLink.style.display = "inline-block";
-      logoutLink.style.display = "none";
-      composer.disabled = true;
-      sendBtn.disabled = true;
-      newSessionBtn.disabled = true;
-      userBadge.innerHTML = "user: <em>—</em>";
+        authStatus.textContent = "Not logged in";
+        loginLink.style.display = "inline-block";
+        logoutLink.style.display = "none";
+        composer.disabled = true;
+        sendBtn.disabled = true;
+        newSessionBtn.disabled = true;
+        userBadge.innerHTML = "user: <em>—</em>";
     }
 
     async function checkAuth() {
-      try {
-        const res = await fetch(`${AUTH_BASE}/me`, { method: "GET", credentials: "include" });
+        try {
+        const res = await fetch(`${AUTH_BASE}/me`, {
+            method: "GET",
+            credentials: "include"
+        });
         const data = await res.json();
         if (data && data.authenticated) {
-          const u = data.user || {};
-          const name = u.name || u.email || "User";
-          setAuthedUI(name);
+            const u = data.user || {};
+            const name = u.name || u.email || "User";
+            setAuthedUI(name);
+            // ✅ If authenticated but no session exists, create one immediately
+            if (!sessionId) await createSession();
         } else {
-          setUnauthedUI();
+            setUnauthedUI();
         }
-      } catch (e) {
+        } catch (e) {
         authStatus.textContent = "Auth error";
         setUnauthedUI();
-      }
+        }
     }
 
     async function createSession() {
-        // Clear chat before creating a new session
+        // ✅ Clear chat before creating a new session
         chat.innerHTML = "";
 
         sessionBadge.innerHTML = "session: <em>creating…</em>";
         const res = await fetch("/api/session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId })
         });
         const data = await res.json();
 
         if (data.ok) {
-            sessionId = data.session_id;
-            sessionBadge.innerHTML = "session: <strong>" + sessionId + "</strong>";
-            addMsg("assistant", "✅ New session created. How can I help?");
+        sessionId = data.session_id;
+        sessionBadge.innerHTML = "session: <strong>" + sessionId + "</strong>";
+        addMsg("assistant", "✅ New session created. How can I help?");
         } else {
-            sessionBadge.innerHTML = "session: <em>error</em>";
-            addMsg("assistant", "❌ Failed to create session: " + (data.error || "unknown error"));
+        sessionBadge.innerHTML = "session: <em>error</em>";
+        addMsg("assistant", "❌ Failed to create session: " + (data.error || "unknown error"));
         }
     }
 
     async function sendMessage() {
-      const text = composer.value.trim();
-      if (!text) return;
-      if (!sessionId) {
+        const text = composer.value.trim();
+        if (!text) return;
+        if (!sessionId) {
         addMsg("assistant", "⚠️ No active session. Click ‘New Session’ first.");
         return;
-      }
-      addMsg("user", text);
-      composer.value = "";
-      sendBtn.disabled = true;
+        }
+        addMsg("user", text);
+        composer.value = "";
+        sendBtn.disabled = true;
 
-      const body = {
+        const body = {
         user_id: userId,
         session_id: sessionId,
         new_message: {
-          role: "user",
-          parts: [{ text }]
+            role: "user",
+            parts: [{ text }]
         }
-      };
-      try {
+        };
+
+        try {
         const res = await fetch("/api/run", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
         });
         const events = await res.json();
         let assistant = null;
+
         if (Array.isArray(events)) {
-          for (const ev of events) {
+            for (const ev of events) {
             const c = ev?.content || {};
             if (c.role === "model") {
-              const parts = c.parts || [];
-              if (parts[0]?.text) {
+                const parts = c.parts || [];
+                if (parts[0]?.text) {
                 assistant = parts[0].text;
-              }
+                }
             }
-          }
+            }
         } else if (events?.error) {
-          assistant = "❌ " + events.error;
+            assistant = "❌ " + events.error;
         }
+
         addMsg("assistant", assistant || "🤖 (no text response found)");
-      } catch (e) {
+        } catch (e) {
         addMsg("assistant", "❌ Error: " + e.toString());
-      } finally {
+        } finally {
         sendBtn.disabled = false;
-      }
+        }
     }
 
     newSessionBtn.addEventListener("click", createSession);
     sendBtn.addEventListener("click", sendMessage);
     composer.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
-      }
+        }
     });
 
+    // ✅ On page load
     checkAuth();
   </script>
   {% endraw %}
