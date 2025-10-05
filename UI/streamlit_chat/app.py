@@ -1,5 +1,5 @@
 """
-V.I.S.I.O.N Application | Need to Change accoring to this Project with LOGIN, TRACKING, ...
+DevTools Application with Authentication
 """
 import streamlit as st
 import requests
@@ -7,6 +7,7 @@ import json
 import os
 import uuid
 import time
+from streamlit_js_eval import streamlit_js_eval
 
 # Set page config
 st.set_page_config(
@@ -22,6 +23,7 @@ st.set_page_config(
 
 # Constants
 API_BASE_URL = "http://localhost:8000"
+FASTAPI_BASE = "http://127.0.0.1:8001"  # FastAPI authentication server
 APP_NAME = "DevTools"
 
 # Initialize session state variables
@@ -34,8 +36,50 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# if "attached_file" not in st.session_state:
-#     st.session_state.attached_file = []
+if "auth_checked" not in st.session_state:
+    st.session_state.auth_checked = False
+
+if "user_authenticated" not in st.session_state:
+    st.session_state.user_authenticated = False
+
+if "user_info" not in st.session_state:
+    st.session_state.user_info = None
+
+def check_authentication():
+    """
+    Check user authentication status using FastAPI backend.
+    
+    This function uses JavaScript to call the /me endpoint with cookies
+    to verify if the user is authenticated with the FastAPI backend.
+    
+    Returns:
+        dict: Authentication payload from the server
+    """
+    js = f"""
+    (async () => {{
+      try {{
+        const res = await fetch("{FASTAPI_BASE}/me", {{
+          method: "GET",
+          credentials: "include"  // send cookies
+        }});
+        const data = await res.json();
+        return JSON.stringify(data);
+      }} catch (e) {{
+        return JSON.stringify({{ error: String(e) }});
+      }}
+    }})()
+    """
+    
+    result = streamlit_js_eval(js_expressions=js, key="auth-check")
+    
+    if result is None:
+        return None
+    
+    try:
+        payload = json.loads(result)
+        return payload
+    except Exception:
+        return {"error": "Invalid JSON from /me"}
 
 def create_session():
     """
@@ -147,11 +191,61 @@ def send_message(message):
     return True
 
 # UI Components
-st.title("V.I.S.I.O.N")
+# Check authentication first
+auth_payload = check_authentication()
+
+# Create top navigation with authentication status
+col1, col2 = st.columns([3, 1])
+
+with col1:
+    st.title("DevTools")
+
+with col2:
+    if auth_payload is None:
+        st.info("🔄 Checking login...")
+        st.stop()
+    elif auth_payload.get("error"):
+        st.error("🔴 Auth Error")
+        if st.button("🔑 Login", key="login_btn"):
+            st.link_button("Continue with Google", f"{FASTAPI_BASE}/login", type="primary")
+    elif auth_payload.get("authenticated"):
+        user = auth_payload.get("user", {})
+        name = user.get("name") or user.get("email") or "User"
+        st.success(f"👋 {name}")
+        if st.button("🚪 Logout", key="logout_btn"):
+            st.link_button("Logout", f"{FASTAPI_BASE}/logout", type="secondary")
+        
+        # Store user info in session state
+        st.session_state.user_authenticated = True
+        st.session_state.user_info = user
+    else:
+        st.warning("🔴 Not logged in")
+        if st.button("🔑 Login", key="login_btn_2"):
+            st.link_button("Continue with Google", f"{FASTAPI_BASE}/login", type="primary")
+
+# Show main app only if authenticated
+if not auth_payload or not auth_payload.get("authenticated"):
+    st.divider()
+    st.warning("🔐 Please log in to access DevTools")
+    st.info("You need to authenticate with your Google account to use this application.")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.link_button("🔑 Continue with Google", f"{FASTAPI_BASE}/login", type="primary", use_container_width=True)
+    
+    st.stop()
+
+# Main application (only shown if authenticated)
+st.divider()
 
 # Sidebar for session management
 with st.sidebar:
     st.header("Session Management")
+    
+    # Show user info
+    if st.session_state.user_info:
+        user = st.session_state.user_info
+        st.info(f"👤 Logged in as: {user.get('name') or user.get('email') or 'User'}")
     
     if st.session_state.session_id:
         st.success(f"Active session: {st.session_state.session_id}")
@@ -165,9 +259,10 @@ with st.sidebar:
     st.divider()
     st.caption("This app interacts with the Agent via the ADK API Server.")
     st.caption("Make sure the ADK API Server is running on port 8000.")
+    st.caption("🔐 Authentication required for access.")
 
 # Chat interface
-st.subheader("Begin by Uploading a Youtube Video Link.")
+st.subheader("🚀 Begin by asking me anything or uploading content for analysis")
 
 # Display messages
 for msg in st.session_state.messages:
