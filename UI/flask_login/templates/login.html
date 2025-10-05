@@ -16,9 +16,21 @@
     input { width: 100%; padding: 10px 12px; border: 1px solid #2a3864; border-radius: 10px; background: #0e1530; color: var(--text); }
     button, .btn { width: 100%; padding: 12px; border: 0; border-radius: 12px; background: var(--accent); color: #081028; font-weight: 700; cursor: pointer; text-align:center; text-decoration:none; display:inline-block; }
     button:hover, .btn:hover { filter: brightness(1.08); }
-    .sep { text-align:center; margin: 10px 0; opacity: .7; font-size: .9rem; }
+    .sep { text-align:center; margin: 14px 0; opacity: .7; font-size: .9rem; position: relative; }
+    .sep::before, .sep::after {
+      content:""; height:1px; background:#2a3864; position:absolute; top:50%; width:40%; }
+    .sep::before { left:0; }
+    .sep::after { right:0; }
     .alert { background:#2a1120; border:1px solid var(--danger); color:#ffd7d7; padding:10px 12px; border-radius:10px; margin:0 0 12px; }
     .muted { font-size: .9rem; opacity: .8; text-align:center; margin-top:12px; }
+    .socials { display:flex; justify-content:center; gap:12px; }
+    .icon-btn {
+      flex:1; display:flex; align-items:center; justify-content:center;
+      background:#0e1530; border:1px solid #2a3864; border-radius:12px;
+      padding:10px; cursor:pointer; transition:.2s;
+    }
+    .icon-btn:hover { background:#182240; }
+    .icon-btn svg { width:20px; height:20px; fill:var(--text); }
   </style>
 </head>
 <body>
@@ -30,16 +42,8 @@
         <div class="alert">{{ error }}</div>
       {% endif %}
 
-      <!-- Google Sign-in -->
-      <form action="/login/google" method="get" style="margin-bottom:12px;">
-        <input type="hidden" name="next" value="{{ next }}">
-        <button type="submit">Continue with Google</button>
-      </form>
-
-      <div class="sep">or</div>
-
       <!-- Email + Password via Firebase Auth REST -->
-      <form action="/login/email" method="post" class="row">
+      <form action="/login/email" method="post" class="row" style="margin-bottom:16px;">
         <input type="hidden" name="next" value="{{ next }}">
         <label for="email">Email</label>
         <input id="email" name="email" type="email" placeholder="you@example.com" required>
@@ -49,6 +53,31 @@
 
         <button type="submit">Sign in with Email</button>
       </form>
+
+    <!--
+      <div class="sep">or</div>
+
+      <div class="socials">
+        <form action="/login/google" method="get">
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="icon-btn" title="Google">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c67.2 0 123.7 24.6 167.5 64.9l-67.9 65.1C323.5 110.5 288.7 96 248 96c-84.3 0-152.7 68.6-152.7 160s68.4 160 152.7 160c73.5 0 120.9-42.6 126.1-102.4H248v-81.6h240c2.2 12.7 4 24.9 4 41.8z"/></svg>
+          </button>
+        </form>
+        <form action="/login/github" method="get">
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="icon-btn" title="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.2 0-5.5-1.6-5.5-3.6 0-2 2.3-3.6 5.2-3.6 2.9 0 5.5 1.6 5.5 3.6zm-31.3-1c-.7 2 1.2 4.3 4.3 5.1 3.2.8 6.5-.2 7.2-2.2.7-2-1.2-4.3-4.3-5.1-3.1-.9-6.5.1-7.2 2.2zm44.2-2c-2.9.8-4.9 3.2-4.3 5.2.7 2 3.9 3 7.2 2.2 3.2-.8 5-3.1 4.3-5.2-.6-2.1-3.9-3-7.2-2.2zm67.3-367C82 27.5 0 109.6 0 214c0 84.5 54.9 156.3 131.3 181.6 9.6 1.8 13.1-4.2 13.1-9.3 0-4.6-.2-16.8-.2-32.9-53.5 11.5-64.7-26-64.7-26-8.6-22.1-21.1-28-21.1-28-17.3-11.8 1.3-11.6 1.3-11.6 19.1 1.4 29.2 19.7 29.2 19.7 17 29.3 44.5 20.9 55.4 16 1.7-12.5 6.7-20.9 12.3-25.7-42.7-4.9-87.6-21.4-87.6-95.6 0-21.1 7.6-38.4 20-52-2-5-8.7-24.9 1.9-51.8 0 0 16.3-5.2 53.4 19.9 15.5-4.3 32.1-6.4 48.6-6.5 16.5.1 33.1 2.2 48.7 6.5 37.1-25.1 53.4-19.9 53.4-19.9 10.7 26.9 4 46.8 1.9 51.8 12.5 13.6 20 30.9 20 52 0 74.3-45 90.6-87.9 95.5 6.9 5.9 13.1 17.5 13.1 35.3 0 25.5-.2 46.1-.2 52.4 0 5.1 3.4 11.1 13.1 9.2C441.1 370.3 496 298.5 496 214c0-104.4-82-186.5-183.9-186.5z"/></svg>
+          </button>
+        </form>
+        <form action="/login/microsoft" method="get">
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="icon-btn" title="Microsoft">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 32h214v214H0V32zm234 0h214v214H234V32zM0 266h214v214H0V266zm234 0h214v214H234V266z"/></svg>
+          </button>
+        </form>
+      </div>
+    -->
 
       <div class="muted">
         By continuing you agree to the Terms and acknowledge the Privacy Policy.
