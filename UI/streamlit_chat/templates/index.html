@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>{{ APP_NAME }} • Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    :root { --bg:#0b1020; --card:#121a33; --text:#e8ecff; --muted:#aab3db; --accent:#7aa2ff; --danger:#ff6b6b; --ok:#1ec28b; }
+    * { box-sizing:border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    .topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #1c2444; }
+    .badge { font-size:12px; padding:4px 8px; border-radius:9999px; background:#0f1733; border:1px solid #1f2a55; color:var(--muted); }
+    .wrap { height:calc(100dvh - 56px); display:grid; grid-template-rows:auto 1fr auto; max-width:980px; margin:0 auto; padding:16px; gap:12px; }
+    .card { background:var(--card); border-radius:14px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+    .row { display:flex; gap:12px; align-items:center; }
+    .right { margin-left:auto; }
+    .chat { display:flex; flex-direction:column; gap:12px; overflow:auto; padding:8px; }
+    .bubble { max-width:80%; padding:12px 14px; border-radius:14px; line-height:1.4; white-space:pre-wrap; }
+    .u { background:#1b264d; border:1px solid #2a3b7a; margin-left:auto; border-top-right-radius:4px; }
+    .a { background:#101836; border:1px solid #1d2856; margin-right:auto; border-top-left-radius:4px; }
+    .muted { color:var(--muted); font-size:13px; }
+    .btn { background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+    input[type="text"] { width:100%; padding:12px 14px; border-radius:10px; border:1px solid #213066; background:#0e1530; color:var(--text); }
+    .pill { padding:6px 10px; border-radius:99px; border:1px solid #24326b; background:#0e1530; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="row" style="gap:10px">
+      <div style="font-weight:800;">{{ APP_NAME }}</div>
+      <div class="badge">Chat UI</div>
+    </div>
+    <div class="row" style="gap:8px">
+      <span id="authStatus" class="muted">Checking login…</span>
+      <a id="loginLink" class="pill" href="{{ AUTH_BASE_URL }}/login" style="display:none; text-decoration:none; color:var(--text)">🔑 Login</a>
+      <a id="logoutLink" class="pill" href="{{ AUTH_BASE_URL }}/logout" style="display:none; text-decoration:none; color:var(--text)">🚪 Logout</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- Session header -->
+    <div class="card row">
+      <div class="row" style="gap:10px">
+        <div>App: <strong>{{ APP_NAME }}</strong></div>
+        <div class="muted">ADK API: {{ API_BASE_URL }}</div>
+      </div>
+      <div class="right row" style="gap:8px">
+        <span id="userBadge" class="pill muted">user: <em>—</em></span>
+        <span id="sessionBadge" class="pill muted">session: <em>none</em></span>
+        <button id="newSessionBtn" class="btn">➕ New Session</button>
+      </div>
+    </div>
+
+    <!-- Chat log -->
+    <div id="chat" class="card chat"></div>
+
+    <!-- Composer -->
+    <div class="card row" style="gap:8px">
+      <input id="composer" type="text" placeholder="Type your message…" disabled/>
+      <button id="sendBtn" class="btn" disabled>Send</button>
+    </div>
+  </div>
+
+  <!-- Inject config constants once (outside raw) -->
+  <script>
+    const AUTH_BASE = "{{ AUTH_BASE_URL }}";
+    const APP_NAME  = "{{ APP_NAME }}";
+  </script>
+
+  <!-- The rest is raw JS so ${...} in template literals won't fight Jinja -->
+  {% raw %}
+  <script>
+    const chat = document.getElementById("chat");
+    const composer = document.getElementById("composer");
+    const sendBtn = document.getElementById("sendBtn");
+    const newSessionBtn = document.getElementById("newSessionBtn");
+    const authStatus = document.getElementById("authStatus");
+    const loginLink = document.getElementById("loginLink");
+    const logoutLink = document.getElementById("logoutLink");
+    const userBadge = document.getElementById("userBadge");
+    const sessionBadge = document.getElementById("sessionBadge");
+
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+      });
+    }
+
+    const userKey = "devtools_user_id";
+    let userId = localStorage.getItem(userKey) || `user-${uuidv4()}`;
+    localStorage.setItem(userKey, userId);
+
+    let sessionId = null;
+
+    function addMsg(role, text) {
+      const div = document.createElement("div");
+      div.className = "bubble " + (role === "user" ? "u" : "a");
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function setAuthedUI(nameOrEmail) {
+      authStatus.textContent = `👋 ${nameOrEmail}`;
+      loginLink.style.display = "none";
+      logoutLink.style.display = "inline-block";
+      composer.disabled = false;
+      sendBtn.disabled = false;
+      newSessionBtn.disabled = false;
+      userBadge.innerHTML = `user: <strong>${userId}</strong>`;
+    }
+
+    function setUnauthedUI() {
+      authStatus.textContent = "Not logged in";
+      loginLink.style.display = "inline-block";
+      logoutLink.style.display = "none";
+      composer.disabled = true;
+      sendBtn.disabled = true;
+      newSessionBtn.disabled = true;
+      userBadge.innerHTML = "user: <em>—</em>";
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch(`${AUTH_BASE}/me`, { method: "GET", credentials: "include" });
+        const data = await res.json();
+        if (data && data.authenticated) {
+          const u = data.user || {};
+          const name = u.name || u.email || "User";
+          setAuthedUI(name);
+        } else {
+          setUnauthedUI();
+        }
+      } catch (e) {
+        authStatus.textContent = "Auth error";
+        setUnauthedUI();
+      }
+    }
+
+    async function createSession() {
+        // Clear chat before creating a new session
+        chat.innerHTML = "";
+
+        sessionBadge.innerHTML = "session: <em>creating…</em>";
+        const res = await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+            sessionId = data.session_id;
+            sessionBadge.innerHTML = "session: <strong>" + sessionId + "</strong>";
+            addMsg("assistant", "✅ New session created. How can I help?");
+        } else {
+            sessionBadge.innerHTML = "session: <em>error</em>";
+            addMsg("assistant", "❌ Failed to create session: " + (data.error || "unknown error"));
+        }
+    }
+
+    async function sendMessage() {
+      const text = composer.value.trim();
+      if (!text) return;
+      if (!sessionId) {
+        addMsg("assistant", "⚠️ No active session. Click ‘New Session’ first.");
+        return;
+      }
+      addMsg("user", text);
+      composer.value = "";
+      sendBtn.disabled = true;
+
+      const body = {
+        user_id: userId,
+        session_id: sessionId,
+        new_message: {
+          role: "user",
+          parts: [{ text }]
+        }
+      };
+      try {
+        const res = await fetch("/api/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const events = await res.json();
+        let assistant = null;
+        if (Array.isArray(events)) {
+          for (const ev of events) {
+            const c = ev?.content || {};
+            if (c.role === "model") {
+              const parts = c.parts || [];
+              if (parts[0]?.text) {
+                assistant = parts[0].text;
+              }
+            }
+          }
+        } else if (events?.error) {
+          assistant = "❌ " + events.error;
+        }
+        addMsg("assistant", assistant || "🤖 (no text response found)");
+      } catch (e) {
+        addMsg("assistant", "❌ Error: " + e.toString());
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    newSessionBtn.addEventListener("click", createSession);
+    sendBtn.addEventListener("click", sendMessage);
+    composer.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    checkAuth();
+  </script>
+  {% endraw %}
+</body>
+</html>

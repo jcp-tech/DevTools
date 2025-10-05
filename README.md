@@ -122,5 +122,5 @@ We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guideline
 - License: **BSL 1.1**, with conversion to **Apache-2.0** on the Change Date
 
 
-> uvicorn UI.flask_login.main:app --reload --host 127.0.0.1 --port 8000
-> streamlit run .\UI\streamlit_chat\login.py
+> uvicorn UI.flask_login.main:app --reload --host 127.0.0.1 --port 8001
+> uvicorn UI.streamlit_chat.main:app --reload --host 127.0.0.1 --port 8501
