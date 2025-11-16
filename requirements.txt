@@ -1,23 +1,24 @@
-# google-cloud-aiplatform[adk,agent_engines]
-# cloudpickle==3.1.1
-google-adk==1.12.0
-mcp
-# pydantic==2.11.7
-requests>=2.31.0
-# litellm
-python-dotenv # ==1.0.1
+### Im in Process of Redoing the requirements.txt file due to package conflicts
+## Installed Again & Tested Working:
+google-adk
+python-dotenv
 toolbox-core
-# selenium
+requests
 pandas
-google-auth-oauthlib>=1.2.0
-firebase-admin>=7.1.0
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.6
-# google-cloud-storage>=2.18.0
-# watchdog>=6.0.0
-jinja2==3.1.4
-python-multipart==0.0.9
-authlib>=1.6.1
-passlib[bcrypt]==1.7.4
-pyjwt[crypto]==2.9.0
-httpx==0.27.2
+## Not Installed Yet / To Be Tested:
+mcp
+# pydantic
+# selenium
+# litellm
+google-auth-oauthlib
+firebase-admin
+fastapi
+uvicorn[standard]
+# google-cloud-storage
+# watchdog
+jinja2
+python-multipart
+authlib
+passlib[bcrypt]
+pyjwt[crypto]
+httpx

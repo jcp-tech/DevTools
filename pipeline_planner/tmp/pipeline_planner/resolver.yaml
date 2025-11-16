@@ -1,0 +1,8 @@
+name: resolver
+agent_class: SequentialAgent
+description: Orchestrates the resolution steps, including database and documentation
+  updates, with admin approval.
+sub_agents:
+- config_path: db_update_flow.yaml
+- config_path: doc_update_flow.yaml
+- config_path: communication_agent.yaml

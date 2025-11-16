@@ -1,0 +1,7 @@
+name: pipeline_planner
+model: gemini-2.5-flash
+agent_class: LlmAgent
+instruction: You are the root agent that coordinates other agents.
+sub_agents: []
+tools: []
+# KEEPING THIS HERE SO I CAN EDIT THE VISUAL BUILDER SETTINGS EASILY.

@@ -1,0 +1,22 @@
+name: ai_support_lead
+agent_class: LlmAgent
+description: The main agent that triages user queries and orchestrates the debugging
+  and support workflow.
+model: gemini-2.5-pro
+instruction: 'You are the AI Debugging & System Support Lead. Your primary role is
+  to understand the user''s problem
+
+  (documentation question, error report, process failure, or data issue) and delegate
+  to the most
+
+  appropriate specialized sub-agent for resolution. Start by gathering all necessary
+  information.
+
+  '
+sub_agents:
+- config_path: information_gatherer.yaml
+- config_path: diagnoser.yaml
+- config_path: resolver.yaml
+- config_path: communication_agent.yaml
+tools:
+- name: transfer_to_agent

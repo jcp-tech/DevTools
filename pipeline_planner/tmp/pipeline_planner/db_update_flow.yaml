@@ -1,0 +1,6 @@
+name: db_update_flow
+agent_class: SequentialAgent
+description: Manages the sequence for database updates, including admin approval.
+sub_agents:
+- config_path: admin_approval_db.yaml
+- config_path: db_writer_agent.yaml

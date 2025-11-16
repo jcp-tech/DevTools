@@ -1,0 +1,15 @@
+name: notion_writer_agent
+agent_class: LlmAgent
+description: Updates or creates new documentation in Notion MCP.
+model: gemini-2.5-pro
+instruction: 'Upon receiving admin approval, update or create new documentation in
+  Notion MCP based on the resolution
+
+  or "how-to" query. Ensure the documentation is clear, accurate, and easily discoverable.
+
+  '
+tools:
+- name: pipeline_planner.tools.knowledge_base_tools.notion_mcp_write
+callbacks:
+  before_tool_callbacks:
+  - name: pipeline_planner.callbacks.admin_approval_callbacks.check_notion_write_approval

@@ -1,5 +1,6 @@
 **/*__pycache__*/
 **/.env
+**/.firebaserc
 **/*ignore*/
 /ignore-notes.md
 /ignore.bash
@@ -9,6 +10,7 @@
 /toolbox.exe
 **/client_secret.json
 **/service-account.json
+**/firebase.json
 **/*.keras
 DevTools/server_scripts/
 UI/login.zip

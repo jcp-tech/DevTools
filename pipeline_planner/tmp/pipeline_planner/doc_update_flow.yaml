@@ -1,0 +1,6 @@
+name: doc_update_flow
+agent_class: SequentialAgent
+description: Manages the sequence for documentation updates, including admin approval.
+sub_agents:
+- config_path: admin_approval_notion.yaml
+- config_path: notion_writer_agent.yaml
