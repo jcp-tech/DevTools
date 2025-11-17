@@ -1,0 +1,18 @@
+agent_class: LlmAgent
+name: code_investigator_agent
+description: Analyzes backend code related to the issue, deep-diving into function
+  logic, control flow, and error conditions.
+model: gemini-2.5-flash
+instruction: You are the Code Analysis Expert. Using the affected URL and problem
+  description, identify relevant code paths (views, functions, templates). Fetch source
+  code from GitHub, analyze function logic, control flow, and identify potential areas
+  causing the bug. Look for helper functions and relevant model interactions. Store
+  your detailed code analysis findings.
+tools:
+- name: pipeline_planner.tools.custom_debug_tools.get_lookup_url
+- name: pipeline_planner.tools.custom_debug_tools.extract_function_source_tool
+- name: GitHub_MCP_Read
+- name: LongRunningFunctionTool
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_code_findings

@@ -1,8 +1,0 @@
-name: information_gatherer
-agent_class: ParallelAgent
-description: Gathers comprehensive information from knowledge bases, live systems,
-  and databases concurrently.
-sub_agents:
-- config_path: knowledge_base_searcher.yaml
-- config_path: system_analyzer.yaml
-- config_path: database_reader.yaml

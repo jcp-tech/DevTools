@@ -1,0 +1,14 @@
+agent_class: LlmAgent
+name: data_investigator_agent
+description: Investigates data integrity and state in the database, comparing expected
+  vs. actual values.
+model: gemini-2.5-flash
+instruction: You are the Database Validator. Based on the problem and code analysis,
+  identify relevant database tables or models. Use the DB Read tool to validate data
+  integrity, verify object states, and compare values against expected norms. Determine
+  if data contributes to or explains the observed bug. Store all relevant data findings.
+tools:
+- name: pipeline_planner.tools.database_tools.db_read_tool
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_data_findings

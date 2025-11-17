@@ -1,0 +1,15 @@
+agent_class: LlmAgent
+name: action_proposer_agent
+description: Suggests concrete corrective actions based on the root cause, including
+  database fixes, code changes (proposals), or documentation updates.
+model: gemini-2.5-flash
+instruction: You are the Action Suggestor. Based on the identified root cause and
+  proposed solution, determine if any direct, actionable corrective steps can be taken.
+  This might include database updates, documentation fixes, or specific code change
+  recommendations. Formulate these as clear, concise action items. If no actions are
+  directly suggested, indicate that the issue is resolved with explanation. Store
+  proposed actions in memory.
+tools:
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_proposed_actions

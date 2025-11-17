@@ -1,0 +1,423 @@
+##### UNREFINED PROMT (for Reference)
+```
+
+I need a Complex Agentic Workflow/Pipeline which is to be Used to Debug Error's and Fixes
+
+The User will give either one of the below queries (but not limited to them either):
+
+- A Question on how the Whole or Part of the System Works & Agent should Reply
+
+- Gives a URL or Screenshot of the Problem & System Debugs and Tells either what is wrong in the Code and how to Fix it OR maybe even Explain how the Process Followed by User is Wrong
+
+- other possibilities of debuging
+
+Now the System will have a Mix of Differnt Tools and MCP Servers (some custom built MCP & Tools also)
+
+TOOLS/MCP (These are Just Plans may or May not be Included/Created)
+
+- Notion MCP to read (for any User)
+
+- Notion MCP to Update Documentation (for Admins ONLY)
+
+- Github MCP to Read Important Information
+
+- Gen-AI-Toolbox to Connect to Database and Read the Existing Data to Compare or See if my Reading Data the Debugging Can be Done (read Only for User)
+
+- Gen-AI-Toolbox to Fix or Correct Data (write Permissions for Admins)
+
+- Custom Tool called get_lookup_url Which Get's URL List from Django or the Running System which Talks about all the URL's and it's File Paths so Agent can Debug more Quickly
+
+- Custom Tool called extract_function_source_tool Which will give you the Code per Function if given the Path and it's Conected Function Names so Agent can check them Out Also
+
+- Other ADK Built in Tools that will be Usefull included but not limited to {
+
+    "Search Tools": [
+
+        "google_search",
+
+        "EnterpriseWebSearchTool",
+
+        "VertexAiSearchTool"
+
+    ],
+
+    "Context Tools": [
+
+        "FilesRetrieval",
+
+        "load_memory",
+
+        "preload_memory",
+
+        "url_context",
+
+        "VertexAiRagRetrieval"
+
+    ],
+
+    "Agent Function Tools": [
+
+        "exit_loop",
+
+        "get_user_choice",
+
+        "LongRunningFunctionTool",
+
+        "load_artifacts"
+
+    ]
+
+}
+
+- Other Function Tools, MCP Tools or Agents as a Tool which can Fit well for this.
+
+NOTE: There will be More Custom Tools but also they could also be put into single or mulitple MCP Servers for easier Accesibility.
+
+
+
+The Goal is to Maximise Efficiency so i want a Pipleine Structure like a IT Company Inclusive but not limited to a Software Development Team Strucutre in it
+
+if you need to Build it a Way of a Companyies Hirearcy
+
+So each Agent will have a Specific Function or Task Assigned to them to Collect Data or Execute a Tool (This doesnt Mean 1 Agent 1 Tool it meant that each agent IF NEEDED can be used to Specilize towards a Task)
+
+
+
+MAKE SURE TO USE LLM AGENTS, SEQUENCIAL AGENTS, LOOP AGENTS & PARALLL AGENTS in the Pipeline the Most Efficient Pipeline will be Structure with Multiple Instances of each for Maximum Efficiency
+
+
+
+ALSO wherever needed add the Required Callback.
+
+```
+
+
+
+
+
+##### REFINED PROMT (if it helps to understand the idea better)
+
+### Prompt Objective: Design an Agentic Debugging Workflow
+
+Design the most optimal, complex, multi-agent workflow to function as an "AI Debugging & System Support" team. Your task is to design the agentic structure that will diagnose and resolve user-submitted queries, bugs, and data issues using the provided tools.
+
+---
+
+### 1. 📥 Input Triggers (User Queries)
+
+The system must be able to handle the following (and similar) inputs:
+* **Documentation Questions:** "How does the [feature] work?"
+* **Error Reports:** "I'm getting an error on this URL: [URL]." (May include screenshots).
+* **Process Failures:** "I followed the steps, but the result is wrong."
+* **Data Issues:** "Why does this dashboard show incorrect data?"
+
+---
+
+### 2. 🛠️ Available Tools & Resources (The "Tech Stack")
+
+The workflow will have access to the following tools, categorized by function.
+
+**Knowledge Bases (Read-Only):**
+* **Notion MCP:** Read access for all users to search existing documentation, guides, and system architecture notes.
+* **GitHub MCP:** Read access to pull important information, likely from READMEs, wikis, or configuration files.
+
+**System Analysis Tools (Custom):**
+* `get_lookup_url`: A custom tool that queries the live Django system to return a list of all valid URLs and their corresponding file paths.
+* `extract_function_source_tool`: A custom tool that, given a file path and function name, extracts the full source code for that function and any connected functions it calls.
+
+**Database Tools (Gen-AI-Toolbox):**
+* **DB Reader (User-level):** Read-only access to the database to compare data, check records, and validate states for debugging.
+* **DB Writer (Admin-level):** Write permissions to fix or correct data entries. **This tool must be gated by an admin-approval callback.**
+
+**Administrative Tools (Admin-Only):**
+* **Notion MCP (Write):** Write access to update or create new documentation based on a bug fix or a "how-to" query. **This tool must be gated by an admin-approval callback.**
+
+**Core ADK Tools:**
+* **Search:** `Google Search`, `EnterpriseWebSearchTool`, `VertexAiSearchTool`
+* **Context:** `FilesRetrieval`, `load_memory`, `preload_memory`, `url_context`, `VertexAiRagRetrieval`
+* **Agent Functions:** `exit_loop`, `get_user_choice`, `LongRunningFunctionTool`, `load_artifacts`
+
+> **Permission Handling Note:** Tools with `User` (Read) and `Admin` (Write) permissions will be provided as **separate instances of the tool**. The backend system will determine if the active user is a `User` or `Admin` and make the appropriate tool instance available to the workflow.
+
+---
+
+### 3. ⚙️ Workflow Requirements & Goals
+
+You must design the workflow architecture based on these core principles. The final design **must be a multi-layered pipeline** and not a single, flat layer of agents.
+
+* **Hierarchical Structure:** Design a logical, multi-step pipeline. The flow should mimic an expert IT support team: an initial agent should **triage** and **classify** the problem, then pass it to a **team of specialized agents** for investigation, then to another agent to **synthesize** findings and form a hypothesis, and finally to an agent that **resolves** the issue (by fixing code, answering a question, or correcting data).
+* **Maximize Efficiency:** Your primary goal is to use this hierarchical structure to create the **most efficient and logical agentic workflow**.
+* **Agent Specialization:** Within your structure, agents **must** be specialized for distinct tasks (e.g., a "Code Analyst" agent, a "Database Analyst" agent, a "Documentation Agent"). Avoid creating a single "mega-agent."
+* **Mandatory Agent Types:** The workflow **must** effectively utilize a combination of **Sequential Agents** (for the main pipeline flow), **Parallel Agents** (e.g., for the investigation team), and **Loop Agents** (e.g., for iterative debugging).
+* **Gated Actions:** The workflow must include **gated callbacks** for any action that requires admin approval (e.g., writing to the database, updating documentation). Use the `get_user_choice` tool for these admin-approval steps.
+
+---
+
+### 4. 🖥️ System & Model Specifications
+
+* **Execution:** The system will utilize a **runner** and persistent **session memory** to maintain context, agent state, and history throughout the debugging process.
+* **Model:** The primary LLM for all agents will be **Gemini 2.5 Pro**.
+
+
+
+
+
+##### ADK ITEMS TO USE TO BUILD WITH
+# ADK Structure
+
+## 1. Agent Types
+
+Agents are the core building blocks of an ADK system. Use different agent types for different orchestration patterns.
+
+### LlmAgent
+- Description: Interacts with a Large Language Model (LLM). Receives user input, passes instruction + tools to the model, processes the model response.
+- When to use: Any agent that needs natural language understanding, complex prompting, or tool use. The `root_agent.yaml` must be an `LlmAgent`.
+- Key fields: `name`, `model` (e.g., `gemini-2.5-flash`), `instruction`, `tools`, `input_schema`, `output_schema`, `before_model_callbacks`, `after_model_callbacks`, `before_tool_callbacks`, `after_tool_callbacks`, `generate_content_config`.
+
+### SequentialAgent
+- Description: Executes `sub_agents` in a fixed linear order, passing one agent's output to the next.
+- When to use: Strict step-by-step workflows (e.g., analyze → summarize → report).
+- Key fields: `name`, `sub_agents`.
+
+### ParallelAgent
+- Description: Runs `sub_agents` concurrently, then aggregates results.
+- When to use: Independent tasks that can run in parallel to speed up processing.
+- Key fields: `name`, `sub_agents`.
+
+### LoopAgent
+- Description: Repeatedly executes `sub_agents` until a condition or `max_iterations` is reached.
+- When to use: Iterative refinement or retry workflows (e.g., refine draft until criteria met).
+- Key fields: `name`, `sub_agents`, `max_iterations`.
+
+Important: Sequential/Parallel/Loop agents are orchestrators and do not include `model`, `instruction`, or `tools` fields — those belong to the `LlmAgent` sub-agents.
+
+---
+
+## 2. Tools
+
+Tools extend LLM capabilities to interact with external systems, perform calculations, fetch data, or run custom logic.
+
+### ADK Built-in Tools
+Reference directly by name in an `LlmAgent`:
+- Examples: `google_search`, `url_context`, `VertexAiSearchTool`, `transfer_to_agent` (injected for sub-agents), `load_memory`, `exit_loop`, `get_user_choice`.
+- Usage (YAML snippet):
+```yaml
+tools:
+    - name: google_search
+    - name: url_context
+```
+
+### Custom Tools (Function Tools)
+Create Python functions and reference them by fully qualified path.
+
+Example: tools/dice_tool.py
+```python
+# tools/dice_tool.py
+import random
+
+def roll_dice(num_dice: int = 1, num_sides: int = 6) -> int:
+        """Roll specified dice and return the total."""
+        if num_dice <= 0 or num_sides <= 0:
+                raise ValueError("Number of dice and sides must be positive.")
+        return sum(random.randint(1, num_sides) for _ in range(num_dice))
+```
+
+Reference in `root_agent.yaml`:
+```yaml
+name: RootAgent
+agent_class: LlmAgent
+model: gemini-2.5-flash
+instruction: "You are a helpful assistant. You can roll dice using the dice_tool."
+tools:
+    - name: pipeline_planner.tools.dice_tool.roll_dice
+```
+
+Notes:
+- Tool definitions can accept parameters in YAML for simple cases, but complex configuration is best done by instantiating tool objects in Python and referencing them.
+
+---
+
+## 3. Callbacks
+
+Callbacks let you inject logic at lifecycle points for logging, input/output modification, security, or error handling.
+
+Types:
+- `before_agent_callbacks` / `after_agent_callbacks` — run before/after an agent executes.
+- `before_model_callbacks` / `after_model_callbacks` — run before/after an LLM call inside an `LlmAgent`.
+- `before_tool_callbacks` / `after_tool_callbacks` — run before/after a tool invocation.
+
+Usage:
+- Implement Python functions with the expected signatures and reference them by fully qualified path in the agent YAML.
+
+Example (conceptual):
+```yaml
+before_model_callbacks:
+    - my_project.callbacks.log_input.pre_model_callback
+```
+
+---
+
+This file outlines the core ADK concepts: agent types (including orchestrators), tools (built-in and custom), and callback extension points to build flexible, production-ready multi-agent systems.
+
+
+
+
+
+
+##### GitHub ReadMe for Reference <> https://github.com/jcp-tech/DevTools
+```
+# DevTools
+
+DevTools is a **source-available project** built with Google’s **ADK Framework** and sample tools.  
+It is designed to help with debugging, automation, and orchestration of developer workflows.
+
+---
+
+## 🚀 Features
+
+> **Note:** Built on **ADK (Agent Development Kit)**, focused on debugging a **Django + MySQL system**.
+
+## 1) Purpose
+
+Help users debug issues by providing details (screenshots, Django yellow error pages, HTML, images, or free‑form descriptions). The AI agent will understand the problem and follow a standard, step‑by‑step debugging procedure, delegating tasks to sub‑agents/tools as needed.
+
+## 2) Scope (Current)
+
+- **Agentic Framework:** ADK (core orchestration layer)
+- **Target Framework for Debugging:** Django
+- **Database:** MySQL
+- **Context Inputs:**
+
+  - Screenshots
+  - Yellow error page text (raw HTML, image, or plain text)
+  - Free‑form problem details
+  - Links/URLs inside the app (when available)
+
+## 3) Debugging Workflow (Existing)
+
+1. **If a link is provided:**
+
+   - Extract file/function location from the link.
+2. **If file or function path is known:**
+
+   - Read the function docstring (`__doc__`) first, then the full function code.
+   - If sub‑functions are referenced inside, read them too and understand their behavior.
+   - Use this to reconstruct the logic of the function for deeper understanding.
+3. **Use database models when relevant:**
+
+   - Understand what data enters the function and where it goes.
+4. **Understand the data flow:**
+
+   - Rely on any available documentation (acknowledging it may be limited).
+
+## 4) Tools (Existing)
+
+- **ADK as Orchestration Layer**
+
+  - Hosts the agent network; coordinates sub‑agents and tool calls.
+- **GenAI Toolkit Toolbox**
+
+  - Connect to **MySQL** (initially **read‑only**; later, controlled write access will be enabled after verification).
+- **Custom‑Built Tool (to be converted to ADK’s MCP Server)**
+
+  - Lists the different links in the system.
+  - Given a link for debugging, returns key details (URL, file path, name, etc.) with schema guaranteed for locating the code.
+- **File/Function Reading Tools**
+
+  - Via **GitHub MCP** and/or a **custom code‑parsing tool** (both may be used; GitHub MCP is ideal but limited on alternate branches).
+
+## 5) Assumptions & Constraints (As Stated)
+
+- System documentation exists but is limited.
+- The agent should prioritize understanding function logic and data flow from real code and models.
+- MySQL: start with **read‑only access**. Controlled writes added later once reliability is proven.
+- The ADK agent network is separate from Django, with only database + tool permissions for debugging.
+- Links inspector guarantees correct schema for locating code.
+
+## 6) Supporting Context (New)
+
+- **Notion Documentation** will be provided, containing scenarios, problems, and mitigation strategies. This gives the agent context on system logic and expected flows.
+- **Agentic Pipelines in ADK:** ADK will orchestrate multiple specialized agents working together in a pipeline.
+- **Audit Trail (Future To‑Do):** Logging every debugging step is **very important**, but will be added after the system stabilizes.
+
+## 7) Current Status Summary
+
+- Planning a multi‑agent debugging flow using ADK as the orchestration framework.
+- Flow starts from user-provided artifacts (links, error pages, screenshots, text) and drills into code, sub‑functions, and models to map data flow and logic.
+- Tooling to resolve links → code locations and to read code is in scope.
+- MySQL connectivity via GenAI toolkit is in scope (read‑only first).
+- Notion docs and audit trail are part of the future roadmap.
+```
+
+
+
+
+
+##### LinkedIn Post Details
+```
+Project Announcement:
+I am currently working on an Agentic Pipeline built with Google’s Agent Development Kit (ADK). The vision for this project is to create a universal software debugging tool that can be applied to any software system or large code repository.
+
+Initial Focus: The first implementation is being tested on a Django + MySQL project.
+
+Long-Term Goal: To provide a platform that enables even non-developers or managers, without any coding background, to describe issues in plain language and receive actionable debugging assistance.
+
+Completed Milestones:
+- Database debugging with genai-toolbox
+- GitHub repository integration for code context using github-mcp-server
+- Custom MCP tools to interact with the local codebase & more (currently implemented as standalone tools due to issue https://github.com/google/adk-python/issues/2769 )
+
+Next Steps:
+- Development of a custom UI for authentication and agent communication
+- Establishing a detailed, if possible a dynamic structure for the agentic pipeline
+- Documentation & Process understanding via notion-mcp-server
+- Optional Exploration of toolsets for Web UI interaction to reproduce errors in a controlled environment
+- Integration with reporting tools to read and, where appropriate, update user-raised issues
+- Figure out a suitable name for this project 😂.
+
+Looking Ahead:
+This project aims to make debugging more efficient, accessible, and scalable across diverse software environments. If you are interested in contributing, feel free to message me directly.
+
+
+
+
+#Python #Django #MySQL #GoogleADK #OpenSource #SoftwareDevelopment #Debugging #AI #AgenticAI #DeveloperTools #MachineLearning #ArtificialIntelligence #Automation #Engineering #TechInnovation #GitHub #ADK #MCP #A2A #AgenticPiepline #jcp #DevTools
+```
+
+
+
+
+
+ADDITIONAL NOTES =
+```
+Add a Note that the ADK Built-In Tools are NOT NEEDED to be used but use IF & WHERE NEEDED ONLY basically Use If Nessary.
+ILL GIVE YOU EXPLAINATION ON WHICH CAN BE USED AND WHY
+- google_search: Canno't be Used initially BUT can be used in One of the Sub Tools/Agents for it to do it's own Research
+- EnterpriseWebSearchTool: Dont have any Use YET
+- VertexAiSearchTool: Dont have any Use YET
+- VertexAiRagRetrieval: Dont have any Use YET but may be Used in the Future for Quick Retrieval
+- FilesRetrieval: Use Full in the Internal Tools if any Documents are Taken from the System and have to read
+- url_context: Can be Usefull but the Systems most probably need Login and Make it Difficult to Read the Data for the Agent BUT can be used for other Purposes
+- load_memory: VERY USEFULL
+- preload_memory: Usefull for SURE
+- load_artifacts: Probably Usefull
+- exit_loop: Usefull and probably Needed in the Loop Agents (unsure)
+- get_user_choice: VERY USEFULL in getting Additional Context from User before continuing Process
+- LongRunningFunctionTool: Going to be VERY USEFULL cause there will be Functions which Take Time
+```
+
+
+UPDATE WHICH I FORGOT TO MENTION:
+```
+There might be a Selenium Scrapper Tool/MCP Server Included for the Agent to Self Test Browser UI Elements if a web based System/Framework.
+```
+
+
+
+
+
+
+
+
+
+UPDATE THE PROMT AND GIVE ME.

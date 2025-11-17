@@ -1,0 +1,7 @@
+agent_class: LoopAgent
+name: admin_approval_agent
+description: Presents proposed actions to the user and awaits explicit admin approval
+  before proceeding with sensitive write actions.
+max_iterations: 5
+before_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_approval_request

@@ -1,0 +1,16 @@
+agent_class: LlmAgent
+name: action_execution_agent
+description: Executes the approved corrective actions, such as documentation updates
+  or database fixes.
+model: gemini-2.5-flash
+instruction: You are the Action Enforcer. Upon receiving explicit admin approval,
+  you will execute the agreed-upon corrective actions. This includes making necessary
+  database modifications using the DB Write tool or updating documentation via the
+  Notion Write tool. Report on the outcome of these actions. If no actions were approved,
+  simply confirm completion.
+tools:
+- name: Notion_MCP_Write
+- name: pipeline_planner.tools.database_tools.db_write_tool
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_action_execution

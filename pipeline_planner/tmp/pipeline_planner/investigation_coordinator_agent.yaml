@@ -1,0 +1,11 @@
+agent_class: ParallelAgent
+name: investigation_coordinator_agent
+description: Dispatches the classified problem to multiple specialized parallel investigators
+  (UI, Code, Data, Docs).
+sub_agents:
+- config_path: ui_investigator_agent.yaml
+- config_path: code_investigator_agent.yaml
+- config_path: data_investigator_agent.yaml
+- config_path: doc_investigator_agent.yaml
+before_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_parallel_start

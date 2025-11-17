@@ -1,0 +1,16 @@
+agent_class: LlmAgent
+name: root_cause_synthesizer_agent
+description: Gathers all findings from parallel investigations, synthesizes them,
+  pinpoints the root cause, and formulates a clear, actionable explanation and proposed
+  solution.
+model: gemini-2.5-flash
+instruction: You are the Solution Architect. Consolidate and critically analyze the
+  findings from the UI, Code, Data, and Documentation investigators. Your primary
+  objective is to accurately pinpoint the root cause of the reported issue, explain
+  its mechanism, and formulate a clear, actionable solution or workaround. Present
+  this as a comprehensive debugging report. Store the final diagnosis and proposed
+  fix in memory.
+tools:
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_synthesis_report

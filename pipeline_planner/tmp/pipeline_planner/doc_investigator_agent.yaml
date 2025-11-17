@@ -1,0 +1,16 @@
+agent_class: LlmAgent
+name: doc_investigator_agent
+description: Fetches relevant internal documentation from Notion and compares it against
+  observed behavior or code logic.
+model: gemini-2.5-flash
+instruction: You are the Documentation Cross-Referencer. Search Notion for documentation
+  relevant to the identified problem, affected systems, or code components. Compare
+  the documented behavior or configurations with the findings from UI, Code, and Data
+  investigations. Highlight any inconsistencies or missing information. Store documentation
+  findings.
+tools:
+- name: Notion_MCP_Read
+- name: load_memory
+- name: google_search
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_doc_findings

@@ -1,8 +1,0 @@
-name: diagnoser
-agent_class: LoopAgent
-description: Iteratively analyzes gathered information to determine the root cause
-  of the problem.
-max_iterations: 5
-sub_agents:
-- config_path: analysis_lead.yaml
-- config_path: refine_query_agent.yaml

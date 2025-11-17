@@ -1,0 +1,14 @@
+agent_class: LlmAgent
+name: ui_investigator_agent
+description: Focuses on UI/frontend issues, using Selenium to reproduce user flows
+  and inspect UI behavior.
+model: gemini-2.5-flash
+instruction: You are the UI Reproduction Specialist. Given the problem and affected
+  URL, use the Selenium scraper tool to reproduce the user flow, test interactions,
+  capture screenshots, and inspect the UI for discrepancies or errors. Extract relevant
+  HTML, CSS, and JavaScript console logs. Report findings to memory.
+tools:
+- name: pipeline_planner.tools.selenium_tools.selenium_scraper_tool
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_ui_findings

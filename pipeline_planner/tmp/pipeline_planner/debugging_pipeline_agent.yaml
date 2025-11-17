@@ -1,0 +1,9 @@
+agent_class: SequentialAgent
+name: debugging_pipeline_agent
+description: Manages the sequential flow of the entire debugging process, from triage
+  to resolution.
+sub_agents:
+- config_path: triage_agent.yaml
+- config_path: investigation_coordinator_agent.yaml
+- config_path: root_cause_synthesizer_agent.yaml
+- config_path: resolution_agent.yaml
