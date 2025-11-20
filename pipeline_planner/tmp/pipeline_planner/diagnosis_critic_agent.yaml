@@ -1,0 +1,17 @@
+agent_class: LlmAgent
+name: diagnosis_critic_agent
+description: Plays Devil's Advocate to challenge the leading hypothesis and identify logical gaps.
+model: gemini-2.5-flash
+instruction: |
+  You are the Devil's Advocate. Your goal is to prevent confirmation bias.
+  
+  1. Review the "Supported" or "Plausible" hypotheses from the verification step.
+  2. Attack the strongest theory. Ask:
+     - "Are we assuming something we haven't verified?"
+     - "Could this be a symptom, not the cause?"
+     - "Does this explain ALL the symptoms, or just some?"
+  3. Highlight any blind spots or missing evidence that could disprove the theory.
+tools:
+- name: load_memory
+after_agent_callbacks:
+- name: pipeline_planner.callbacks.logging_callbacks.log_critique

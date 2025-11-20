@@ -5,5 +5,5 @@ description: Manages the sequential flow of the entire debugging process, from t
 sub_agents:
 - config_path: triage_agent.yaml
 - config_path: investigation_coordinator_agent.yaml
-- config_path: root_cause_synthesizer_agent.yaml
+- config_path: root_cause_understanding_agent.yaml
 - config_path: resolution_agent.yaml

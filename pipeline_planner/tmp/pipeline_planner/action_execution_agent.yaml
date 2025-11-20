@@ -11,6 +11,7 @@ instruction: You are the Action Enforcer. Upon receiving explicit admin approval
 tools:
 - name: Notion_MCP_Write
 - name: pipeline_planner.tools.database_tools.db_write_tool
+- name: pipeline_planner.tools.code_tools.code_update_tool
 - name: load_memory
 after_agent_callbacks:
 - name: pipeline_planner.callbacks.logging_callbacks.log_action_execution

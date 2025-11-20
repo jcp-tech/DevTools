@@ -3,7 +3,10 @@ name: resolution_agent
 description: 'Manages the final steps: presenting the explanation, proposing actions,
   getting admin approval, and executing actions.'
 sub_agents:
+# Explaination
 - config_path: explanation_agent.yaml
 - config_path: action_proposer_agent.yaml
-- config_path: admin_approval_agent.yaml
-- config_path: action_execution_agent.yaml
+# Execution
+- config_path: admin_execution_agent.yaml
+# After Execution
+- config_path: final_response_agent.yaml

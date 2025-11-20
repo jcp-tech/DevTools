@@ -1,7 +1,17 @@
-agent_class: LoopAgent
+agent_class: LlmAgent
 name: admin_approval_agent
 description: Presents proposed actions to the user and awaits explicit admin approval
   before proceeding with sensitive write actions.
-max_iterations: 5
+model: gemini-2.5-flash
+instruction: |
+  You are the Admin Approval Gatekeeper. Your sole responsibility is to present the proposed corrective actions (found in memory) to the user and ask for explicit approval to proceed.
+  
+  You must use the `get_user_choice` tool to present the options to the user.
+  Suggested options: ["Approve", "Reject"].
+  
+  Do not execute any actions yourself. Simply report the user's decision.
+tools:
+- name: get_user_choice
+- name: load_memory
 before_agent_callbacks:
 - name: pipeline_planner.callbacks.logging_callbacks.log_approval_request
