@@ -14,4 +14,5 @@
 **/*.keras
 DevTools/server_scripts/
 UI/login.zip
+DeepWiki.md
 plan.txt

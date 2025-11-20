@@ -2,6 +2,7 @@
 
 DevTools is a **source-available project** built with Google’s **ADK Framework** and sample tools.  
 It is designed to help with debugging, automation, and orchestration of developer workflows.
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/jcp-tech/DevTools)
 
 ---
 
